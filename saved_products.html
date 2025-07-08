@@ -1,0 +1,15 @@
+<h2>Sản phẩm đã lưu</h2>
+{% if products %}
+<ul>
+  {% for p in products %}
+    <li>
+      {{ p.name }} - {{ p.price }}₫
+      <form action="/delete-saved-product/{{ p.product_id }}" method="post" style="display:inline;">
+        <button type="submit">Xóa</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Chưa có sản phẩm nào được lưu.</p>
+{% endif %}

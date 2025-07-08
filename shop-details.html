@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ogani Template">
+    <meta name="keywords" content="Ogani, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ product.name }} | Ogani</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/elegant-icons.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+</head>
+<style>
+   .comments-section {
+  max-width: 100%;       /* full chiều ngang vùng chứa */
+  width: 100%;
+  margin-top: 20px;
+  padding: 0 20px;       /* đệm 2 bên cho dễ nhìn khi full màn */
+  box-sizing: border-box;
+}
+
+.comment-item {
+  background: #f5f5f5;
+  padding: 12px 20px;    /* tăng padding 2 bên để nội dung không dính mép */
+  border-radius: 8px;
+  margin-bottom: 10px;
+  max-width: 900px;      /* giới hạn chiều ngang mỗi bình luận để đọc dễ hơn */
+  margin-left: auto;     /* căn giữa */
+  margin-right: auto;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;             /* cách nhau rộng hơn */
+  margin-top: 20px;
+  width: 100%;
+  max-width: 900px;      /* căn giữa phân trang với max chiều rộng */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pagination-controls button {
+  min-width: 80px;       /* nút to hơn để dễ bấm */
+  background-color: #1877f2;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:disabled {
+  background-color: #9bbcfb;
+  cursor: default;
+}
+
+</style>
+
+
+</script>
+<body>
+    
+    {% include 'header.html' %}
+
+
+    <!-- Hero Section Begin -->
+   
+    <!-- Hero Section End -->
+
+    <!-- Breadcrumb Section Begin -->
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="{{ url_for('static', filename='img/banner/banner.jpg') }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>{{ product.name }}</h2>
+                    <div class="breadcrumb__option">
+                        <a href="">Trang chủ</a>
+                        <a href="#">Sản phẩm</a>
+                        <span>{{ product.name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+    <!-- Breadcrumb Section End -->
+
+    <!-- Product Details Section Begin -->
+  <!-- Product Details Section Begin -->
+<section class="product-details spad">
+    <div class="container">
+        <div class="row">
+            <!-- Hình ảnh sản phẩm -->
+            <div class="col-lg-6 col-md-6">
+                <div class="product__details__pic">
+                    <div class="product__details__pic__item">
+                        <img class="product__details__pic__item--large" src="{{ url_for('static', filename=product.image_main) }}" alt="">
+                    </div>
+                    <div class="product__details__pic__slider owl-carousel">
+                        <img src="{{ product.image_url or '/static/img/default.jpg' }}" alt="{{ product.name }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin sản phẩm -->
+            <div class="col-lg-6 col-md-6">
+                <div class="product__details__text">
+                    <h3>{{ product.name }}</h3>
+                    <div class="product__details__rating">
+                        {% for _ in range(product.rating_average |int) %}
+                            <i class="fa fa-star"></i>
+                        {% endfor %}
+                        {% if product.rating_average % 1 >= 0.5 %}
+                            <i class="fa fa-star-half-o"></i>
+                        {% endif %}
+                        <span>({{ product.review_count }} đánh giá)</span>
+                    </div>
+                    <div class="product__details__price">${{ product.price }}</div>
+                    <div class="product__details__quantity">
+                        <div class="quantity">
+                            <div class="pro-qty">
+                                <input type="text" value="1">
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="primary-btn">THÊM VÀO GIỎ</a>
+                    <a href="#" class="save-btn"><span class="icon_heart_alt"></span></a>
+                    <ul>
+                        <li><b>Tình trạng</b> <span>{{ 'Còn hàng' if product.in_stock else 'Hết hàng' }}</span></li>
+                        <li><b>Giao hàng</b> <span>Giao trong 1 ngày. <samp>Nhận tại cửa hàng miễn phí</samp></span></li>
+                        <li><b>Trọng lượng</b> <span>{{ product.weight }} kg</span></li>
+                        <li><b>Chia sẻ</b>
+
+
+<script>
+  const comments = [...document.querySelectorAll('.comment-item')];
+  let currentPage = 1;
+  const commentsPerPage = 5;
+  let filteredComments = comments;
+
+  function renderComments() {
+    const start = (currentPage - 1) * commentsPerPage;
+    const end = start + commentsPerPage;
+
+    comments.forEach(c => c.style.display = 'none');
+    filteredComments.slice(start, end).forEach(c => c.style.display = 'block');
+
+    document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = end >= filteredComments.length;
+  }
+
+  function changePage(direction) {
+    currentPage += direction;
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > Math.ceil(filteredComments.length / commentsPerPage)) {
+      currentPage = Math.ceil(filteredComments.length / commentsPerPage);
+    }
+    renderComments();
+  }
+
+  function filterComments() {
+    const ratingValue = document.getElementById('ratingFilter').value;
+    if (ratingValue === 'all') {
+      filteredComments = comments;
+    } else {
+      filteredComments = comments.filter(c => c.getAttribute('data-rating') === ratingValue);
+    }
+    currentPage = 1;
+    renderComments();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderComments();
+  });
+</script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Product Details Section End -->
+
+    <!-- Footer Begin -->
+    {% include 'footer.html' %}
+    <!-- Footer End -->
+
+    <!-- Js Plugins -->
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.slicknav.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mixitup.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

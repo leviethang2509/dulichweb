@@ -1,0 +1,251 @@
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title }}</title>
+    <style>
+.filter-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-container input,
+.filter-container select {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto 40px;
+    padding: 0 15px;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-image {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    background-color: #f9f9f9;
+}
+
+.product-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 10px 15px 5px 15px;
+    color: #333;
+}
+
+.product-price {
+    color: #e91e63;
+    font-weight: bold;
+    padding: 0 15px 10px 15px;
+}
+
+.product-category {
+    padding: 0 15px 10px 15px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+#pagination {
+    max-width: 1200px;
+    margin: 0 auto 30px;
+    padding: 0 15px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+#pagination button {
+    padding: 6px 12px;
+    border: 1px solid #007BFF;
+    background: white;
+    color: #007BFF;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+#pagination button.active,
+#pagination button:hover {
+    background: #007BFF;
+    color: white;
+}
+
+
+    </style>
+</head>
+<body>
+<header>
+    <!-- Có thể thêm header ở đây -->
+</header>
+
+<div class="filter-container">
+    <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm sản phẩm..." />
+
+    <select id="brandFilter">
+        <option value="">Tất cả nhãn hiệu</option>
+        {% for b in brands %}
+            <option value="{{ b|lower }}">{{ b }}</option>
+        {% endfor %}
+    </select>
+
+    <select id="priceFilter">
+        <option value="">💰 Tất cả giá</option>
+        <option value="0-1000000">Dưới 1 triệu</option>
+        <option value="1000000-5000000">1 – 5 triệu</option>
+        <option value="5000000-50000000">5 – 50 triệu</option>
+        <option value="50000000-">Trên 50 triệu</option>
+    </select>
+</div>
+
+<div class="product-grid" id="product-list">
+    {% for p in products %}
+    <div class="product-card"
+         data-id="{{ p.id }}"
+         data-name="{{ p.name|lower }}"
+         data-category="{{ p.category|lower }}"
+         data-brand="{{ p.brand|lower }}"
+         data-price="{{ p.price }}"
+         onclick="goToDetail({{ p.id }})">
+        <img class="product-image" src="{{ p.image_url }}" alt="{{ p.name }}">
+        <div class="product-name">{{ p.name }}</div>
+<div class="product-price">{{ "{:,}".format(p.price | int) }} VNĐ</div>
+
+        <div class="product-category">Danh mục: {{ p.category }}</div>
+        <div class="product-category">Nhãn hiệu: {{ p.brand }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="pagination"></div>
+
+<a href="/">← Quay về trang chính</a>
+
+<script>
+    // Ẩn/hiện header khi scroll
+    let lastScrollY = window.scrollY;
+    const header = document.querySelector('header');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > lastScrollY) {
+            header.style.top = "-80px";
+        } else {
+            header.style.top = "0";
+        }
+        lastScrollY = window.scrollY;
+    });
+
+    // Filter và phân trang sản phẩm
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const brandFilter = document.getElementById('brandFilter');
+        const priceFilter = document.getElementById('priceFilter');
+        const pagination = document.getElementById('pagination');
+
+        const allCards = Array.from(document.querySelectorAll('.product-card'));
+        let filteredCards = [...allCards];
+        let currentPage = 1;
+        const cardsPerPage = 8;
+
+        function filterProducts() {
+            const keyword = searchInput.value.toLowerCase().trim();
+            const selectedBrand = brandFilter.value.toLowerCase().trim();
+            const selectedPrice = priceFilter.value.trim();
+
+            filteredCards = allCards.filter(card => {
+                const name = card.dataset.name.toLowerCase();
+                const brand = card.dataset.brand.toLowerCase();
+                const price = parseInt(card.dataset.price);
+
+                const matchKeyword = name.includes(keyword);
+                const matchBrand = !selectedBrand || brand === selectedBrand;
+
+                let matchPrice = true;
+                if (selectedPrice) {
+                    const [minStr, maxStr] = selectedPrice.split("-");
+                    const min = parseInt(minStr || "0", 10);
+                    const max = maxStr ? parseInt(maxStr, 10) : Infinity;
+                    matchPrice = price >= min && price <= max;
+                }
+
+                return matchKeyword && matchBrand && matchPrice;
+            });
+
+            currentPage = 1;
+            showCurrentPage();
+            updatePagination();
+        }
+
+        function showCurrentPage() {
+            allCards.forEach(card => (card.style.display = 'none'));
+
+            const start = (currentPage - 1) * cardsPerPage;
+            const end = start + cardsPerPage;
+
+            filteredCards.slice(start, end).forEach(card => {
+                card.style.display = 'flex';
+            });
+        }
+
+        function updatePagination() {
+            pagination.innerHTML = '';
+            const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
+            if (totalPages <= 1) return;
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.classList.toggle('active', i === currentPage);
+                btn.addEventListener('click', () => {
+                    currentPage = i;
+                    showCurrentPage();
+                    updatePagination();
+                });
+                pagination.appendChild(btn);
+            }
+        }
+
+        function goToDetail(id) {
+            // Thay URL bằng link trang chi tiết sản phẩm nếu có
+            alert("Bạn chọn sản phẩm có ID: " + id);
+        }
+
+        // Kết nối sự kiện filter
+        searchInput.addEventListener('input', filterProducts);
+        brandFilter.addEventListener('change', filterProducts);
+        priceFilter.addEventListener('change', filterProducts);
+
+        // Khởi tạo
+        filterProducts();
+    });
+</script>
+
+</body>
+</html> 

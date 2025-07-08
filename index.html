@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ogani Template">
+    <meta name="keywords" content="Ogani, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ogani | Template</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+
+<!-- Css Styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/elegant-icons.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<body>
+    <!-- Page Preloder -->
+    
+
+    <!-- Header Section End -->
+     {% include 'header.html' %}
+    <!-- Hero Section Begin -->
+    <section class="hero">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="hero__categories">
+                        <div class="hero__categories__all">
+                            <i class="fa fa-bars"></i>
+                            <span>DANH MỤC</span>
+                        </div>
+                        <ul>
+                                {% for b in brands[:10] %}
+                    <li>{{ b }}</li>
+                {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="hero__search">
+                        <div class="hero__search__form">
+                            <form action="#">
+                                <div class="hero__search__categories">
+                                    LOẠI HÀNG
+                                    <span class="arrow_carrot-down"></span>
+                                </div>
+                                <input type="text" placeholder="What do yo u need?">
+                                <button type="submit" class="site-btn">TÌM KIẾM</button>
+                            </form>
+                        </div>
+                        <div class="hero__search__phone">
+                            <div class="hero__search__phone__icon">
+                                <i class="fa fa-phone"></i>
+                            </div>
+                            <div class="hero__search__phone__text">
+                                <h5>+0921790266</h5>
+                                <span>Hỗ trợ 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero__item set-bg" data-setbg="{{ url_for('static', filename='img/banner/banner.jpg') }}">
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
+
+    <!-- Categories Section Begin -->
+  {% for category in categories %}
+<div class="col-lg-3">
+    <div class="categories__item set-bg" data-setbg="{{ category.image_url }}">
+        <h5><a href="/search?category={{ category.category }}">{{ category.category }}</a></h5>
+    </div>
+</div>
+{% endfor %}
+
+
+    <!-- Categories Section End -->
+<div id="registerContainer" class="mt-4"></div>
+
+    <!-- Featured Section Begin -->
+    <section class="featured spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <h2>LOẠI SẢN PHẨM NỔI BẬT</h2>
+                    </div>
+                    <div class="featured__controls">
+                       <ul>
+                                    {% for b in brands[:5] %}
+                    <li>{{ b }}</li>
+                {% endfor %}
+
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row featured__filter">
+                <div class="row featured__filter">
+                    {% for product in products %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mix {{ product.category | lower | replace(' ', '-') }}">
+                        <div class="featured__item">
+                            <div class="featured__item__pic set-bg" data-setbg="{{ product.image_url }}">
+                                <ul class="featured__item__pic__hover">
+                                                        <li>
+                            <form action="/save_favorite/{{ product.product_id }}" method="post" style="display: inline;">
+                                <button type="submit" style="background: none; border: none; padding: 0;">
+                                <i class="fa fa-heart"></i>
+                                </button>
+                            </form>
+                            </li>
+
+                                    <li><a href="#"><i class="fa fa-retweet"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="featured__item__text">
+        <h6><a href="{{ url_for('product_detail', product_id=product.product_id) }}">{{ product.name }}</a></h6>
+
+                                <h5>${{ '%.2f'|format(product.price) }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Featured Section End -->
+
+
+
+    <!-- Banner Begin -->
+    <div class="banner">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div class="banner__pic">
+                        <img src="img/banner/banner-1.jpg" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div class="banner__pic">
+                        <img src="img/banner/banner-2.jpg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner End -->
+
+    <!-- Latest Product Section Begin -->
+             <section class="latest-product spad">
+    <div class="container">
+        <div class="row">
+
+            <!-- Latest Products -->
+    <div class="col-lg-4 col-md-6">
+        <div class="latest-product__text">
+            <h4>Sản phẩm gợi ý</h4>
+            <div class="latest-product__slider owl-carousel">
+                {% for i in range(0, products|length, 3) %}
+                <div class="latest-prdouct__slider__item">
+                    {% for product in products[i:i+3] %}
+                    <a href="{{ url_for('product_detail', product_id=product.product_id) }}" class="latest-product__item">
+                        <div class="latest-product__item__pic">
+                            <img src="{{ product.image_url or url_for('static', filename='img/default.jpg') }}" alt="{{ product.name }}">
+                        </div>
+                        <div class="latest-product__item__text">
+                            <h6>{{ product.name }}</h6>
+                            <span>${{ '%.2f' | format(product.price) }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+            <!-- Top Rated Products -->
+            <div class="col-lg-4 col-md-6">
+                <div class="latest-product__text">
+                    <h4>Top sản phẩm</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        {% for i in range(0, top_rated_products|length, 3) %}
+                        <div class="latest-prdouct__slider__item">
+                            {% for product in top_rated_products[i:i+3] %}
+                            <a href="#" class="latest-product__item">
+                                <div class="latest-product__item__pic">
+                                    <img src="{{ product.image_url or '/static/img/default.jpg' }}" alt="{{ product.name }}">
+                                </div>
+                                <div class="latest-product__item__text">
+                                    <h6>{{ product.name }}</h6>
+                                    <span>${{ '%.2f'|format(product.price) }}</span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Products -->
+            <div class="col-lg-4 col-md-6">
+            <div class="latest-product__text">
+                <h4>Sản phẩm đánh giá cao</h4>
+                <div class="latest-product__slider owl-carousel">
+                    {% for i in range(0, review_products|length, 3) %}
+                    <div class="latest-prdouct__slider__item">
+                        {% for product in review_products[i:i+3] %}
+                        <a href="{{ url_for('product_detail', product_id=product.product_id) }}" class="latest-product__item">
+                            <div class="latest-product__item__pic">
+                                <img src="{{ product.image_url or '/static/img/default.jpg' }}" alt="{{ product.name }}">
+                            </div>
+                            <div class="latest-product__item__text">
+                                <h6>{{ product.name }}</h6>
+                                <span>${{ '%.2f'|format(product.price) }}</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+        </div>
+    </div>
+</section>
+
+    <!-- Latest Product Section End -->
+
+    <!-- Blog Section Begin -->
+   <section class="from-blog spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title from-blog__title">
+                    <h2>Tin tức</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for post in blog_posts %}
+                <div class="col-lg-4 col-md-4 col-sm-6">
+                    <div class="blog__item">
+                        <div class="blog__item__pic">
+                            <img src="{{ post.images[0] if post.images else url_for('static', filename='img/blog/default.jpg') }}" 
+                                alt="" style="width:200px; height:200px; object-fit: cover;">
+                        </div>
+                        <div class="blog__item__text">
+                            <ul>
+                                <li><i class="fa fa-calendar-o"></i> {{ post.time }}</li>
+                                <li><i class="fa fa-comment-o"></i> 0</li>
+                            </ul>
+                            <h5><a href="{{ url_for('blog_detail', blog_id=post.id) }}">{{ post.title }}</a></h5>
+                            <p>{{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+    <!-- Blog Section End -->
+    
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+<script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.slicknav.js') }}"></script>
+<script src="{{ url_for('static', filename='js/mixitup.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+<script>
+
+</script>
+
+
+</body>
+     {% include 'footer.html' %}
+        
+</html>

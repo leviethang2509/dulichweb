@@ -1,0 +1,68 @@
+<div class="blur-overlay" id="loginOverlay">
+    <form id="loginForm">
+        <div id="loginMessage" class="mb-3"></div>
+
+        <div class="mb-3">
+            <label for="username">Username</label>
+            <input name="username" id="username" type="text" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="password">Password</label>
+            <input name="password" id="password" type="password" class="form-control" required />
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+            <button type="button" class="btn btn-secondary" onclick="location.reload()">Hủy</button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .blur-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(4px);
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+    }
+
+    #loginForm {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 100%;
+    }
+</style>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+
+    fetch('/login', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        const msgBox = document.getElementById('loginMessage');
+        msgBox.textContent = data.message;
+        msgBox.className = data.status === 'success' ? 'alert alert-success' : 'alert alert-danger';
+
+        if (data.status === 'success') {
+            setTimeout(() => {
+                location.reload(); // reload lại sau khi đăng nhập thành công
+            }, 1000);
+        }
+    });
+});
+</script>

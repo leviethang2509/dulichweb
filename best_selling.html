@@ -1,0 +1,144 @@
+<style>
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 28px;
+    height: 28px;
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    top: 45%;
+    color: white;
+    --swiper-navigation-size: 18px; /* icon nhỏ hơn */
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    opacity: 1;
+  }
+
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    font-size: 18px; /* icon mũi tên nhỏ */
+  }
+
+  .swiper-button-next {
+    right: 10px;
+  }
+
+  .swiper-button-prev {
+    left: 10px;
+  }
+</style>
+
+<!-- Swiper CSS -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
+/>
+
+{% block content %}
+<section class="running-cakes spad">
+  <div class="container">
+    <div class="section-title">
+      <h2>Best Selling Cakes</h2>
+    </div>
+
+    <!-- Swiper container -->
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        {% for cake in running_cakes %}
+        <div class="swiper-slide" data-id="{{ cake.id }}">
+          <div class="featured__item" style="width: 100%; padding: 10px; box-sizing: border-box; cursor: pointer;">
+            <div class="featured__item__pic">
+              <img src="{{ cake.image_url or url_for('static', filename='img/default.jpg') }}"
+                alt="{{ cake.name or 'No Name' }}"
+                style="width: 100%; height: auto; border-radius: 5px;">
+            </div>
+            <div class="featured__item__text" style="text-align: center;">
+              <h6>{{ cake.name or 'No Name' }}</h6>
+              <h5>${{ cake.price or 'N/A' }}</h5>
+              <p>Brand: {{ cake.brand or 'Unknown' }}</p>
+              <p>Category: {{ cake.category or 'Unknown' }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Navigation buttons -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+
+      <!-- Pagination (dots) -->
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const swiper = new Swiper('.mySwiper', {
+      slidesPerView: 4,
+      spaceBetween: 20,
+      slidesPerGroup: 4,
+      loop: false,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        320: { slidesPerView: 1, slidesPerGroup: 1 },
+        640: { slidesPerView: 2, slidesPerGroup: 2 },
+        1024: { slidesPerView: 4, slidesPerGroup: 4 },
+      },
+      preventClicks: false,
+      preventClicksPropagation: false,
+    });
+
+    // Bắt sự kiện click, chỉ khi click vào ảnh <img>
+    document.querySelector('.swiper-wrapper').addEventListener('click', function(e) {
+      // Kiểm tra xem phần tử click có phải <img> trong .swiper-slide không
+      if (e.target.tagName.toLowerCase() === 'img') {
+        // Lấy phần tử .swiper-slide cha chứa ảnh
+        const slide = e.target.closest('.swiper-slide');
+        if (slide) {
+          const productId = slide.getAttribute('data-id');
+          if (productId) {
+            window.location.href = `/product/${productId}`;
+          }
+        }
+      }
+    });
+
+    // Auto slide ping-pong
+    let directionForward = true;
+    function autoSlidePingPong() {
+      if (directionForward) {
+        if (swiper.isEnd) {
+          directionForward = false;
+          swiper.slidePrev();
+        } else {
+          swiper.slideNext();
+        }
+      } else {
+        if (swiper.isBeginning) {
+          directionForward = true;
+          swiper.slideNext();
+        } else {
+          swiper.slidePrev();
+        }
+      }
+    }
+    setInterval(autoSlidePingPong, 3000);
+  });
+</script>
+

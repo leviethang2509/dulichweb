@@ -1,0 +1,147 @@
+<div id="main-content">
+  <div class="wrapper">
+
+    <div class="filter-container">
+      <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm sản phẩm...">
+
+      <select id="brandFilter">
+        <option value="">Tất cả nhãn hiệu</option>
+        {% for b in brands %}
+        <option value="{{ b|lower }}">{{ b }}</option>
+        {% endfor %}
+      </select>
+
+      <select id="priceFilter">
+        <option value="">💰 Tất cả giá</option>
+        <option value="0-1000000">Dưới 1 triệu</option>
+        <option value="1000000-5000000">1 – 5 triệu</option>
+        <option value="5000000-50000000">5 – 50 triệu</option>
+        <option value="50000000-">Trên 50 triệu</option>
+      </select>
+    </div>
+
+    <div class="product-grid" id="product-list">
+      {% for p in products %}
+      <div class="product-card"
+           data-id="{{ p.id }}"
+           data-name="{{ p.name|lower }}"
+           data-category="{{ p.category|lower }}"
+           data-brand="{{ p.brand|lower }}"
+           data-price="{{ p.price }}">
+        <img class="product-image" src="{{ p.image_url }}" alt="{{ p.name }}">
+        <div class="product-name">{{ p.name }}</div>
+        <div class="product-price">{{ "{:,}".format(p.price) }} VNĐ</div>
+        <div class="product-category">Danh mục: {{ p.category }}</div>
+        <div class="product-category">Nhãn hiệu: {{ p.brand }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div id="pagination"></div>
+  </div>
+
+  <a href="/" class="back-link">← Quay về trang chính</a>
+</div>
+
+<script>
+  // Hàm điều hướng đến trang chi tiết sản phẩm theo id
+  function goToDetail(productId) {
+    window.location.href = `/product/${productId}`;
+  }
+
+  // Lấy các phần tử DOM cần thiết
+  const searchInput = document.getElementById('searchInput');
+  const brandFilter = document.getElementById('brandFilter');
+  const priceFilter = document.getElementById('priceFilter');
+  const pagination = document.getElementById('pagination');
+
+  const allCards = Array.from(document.querySelectorAll('.product-card'));
+  let filteredCards = [...allCards];
+  let currentPage = 1;
+  const cardsPerPage = 25;
+
+  // Lọc sản phẩm theo keyword, brand, price
+  function filterProducts() {
+    const keyword = searchInput.value.toLowerCase().trim();
+    const selectedBrand = brandFilter.value.toLowerCase().trim();
+    const selectedPrice = priceFilter.value.trim();
+
+    filteredCards = allCards.filter(card => {
+      const name = card.dataset.name;
+      const brand = card.dataset.brand;
+      const price = parseInt(card.dataset.price);
+
+      const matchKeyword = name.includes(keyword);
+      const matchBrand = !selectedBrand || brand === selectedBrand;
+
+      let matchPrice = true;
+      if (selectedPrice) {
+        const [minStr, maxStr] = selectedPrice.split("-");
+        const min = parseInt(minStr || "0", 10);
+        const max = maxStr ? parseInt(maxStr, 10) : Infinity;
+        matchPrice = price >= min && price <= max;
+      }
+
+      return matchKeyword && matchBrand && matchPrice;
+    });
+
+    currentPage = 1;
+    showCurrentPage();
+    updatePagination();
+  }
+
+  // Hiển thị các sản phẩm của trang hiện tại
+  function showCurrentPage() {
+    allCards.forEach(card => card.style.display = "none");
+
+    const start = (currentPage - 1) * cardsPerPage;
+    const end = start + cardsPerPage;
+
+    filteredCards.slice(start, end).forEach(card => {
+      card.style.display = "flex";
+    });
+
+    attachCardClick();
+  }
+
+  // Tạo phân trang
+  function updatePagination() {
+    pagination.innerHTML = "";
+    const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      if (i === currentPage) btn.classList.add("active");
+      btn.addEventListener("click", () => {
+        currentPage = i;
+        showCurrentPage();
+        updatePagination();
+      });
+      pagination.appendChild(btn);
+    }
+  }
+
+  // Gán sự kiện click cho các thẻ sản phẩm đang hiển thị
+  function attachCardClick() {
+    filteredCards.forEach(card => {
+      if (card.style.display !== "none") {
+        card.onclick = () => {
+          const id = card.dataset.id;
+          goToDetail(id);
+        };
+      } else {
+        card.onclick = null;
+      }
+    });
+  }
+
+  // Gán sự kiện cho các bộ lọc
+  searchInput.addEventListener('input', filterProducts);
+  brandFilter.addEventListener('change', filterProducts);
+  priceFilter.addEventListener('change', filterProducts);
+
+  // Khởi động lần đầu
+  filterProducts();
+</script>

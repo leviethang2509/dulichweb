@@ -1,0 +1,187 @@
+
+    <!-- Header Section End -->
+     {% include 'header.html' %}
+    <!-- Hero Section Begin -->
+    <section class="hero hero-normal">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="hero__categories">
+                        <div class="hero__categories__all">
+                            <i class="fa fa-bars"></i>
+                            <span>Danh mục</span>
+                        </div>
+                        <ul>
+                        
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="hero__search">
+                        <div class="hero__search__form">
+                            <form action="#">
+                                <div class="hero__search__categories">
+                                    Loại sản phẩm
+                                    <span class="arrow_carrot-down"></span>
+                                </div>
+                                <input type="text" placeholder="Bạn muốn tìm gì?">
+                                <button type="submit" class="site-btn">TÌM KIẾM</button>
+                            </form>
+                        </div>
+                        <div class="hero__search__phone">
+                            <div class="hero__search__phone__icon">
+                                <i class="fa fa-phone"></i>
+                            </div>
+                            <div class="hero__search__phone__text">
+                                <h5>+0921790266</h5>
+                                <span>Hỗ trợ 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
+
+    <!-- Blog Details Hero Begin -->
+
+    <!-- Blog Details Hero End -->
+
+    <!-- Blog Details Section Begin -->
+   
+<section>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <!-- Ảnh nằm trên -->
+                <div class="text-center mb-4">
+                    <img src="{{ blog_post.images[0] if blog_post.images else url_for('static', filename='img/blog/default.jpg') }}"
+                         alt="Blog Image"
+                         style="width: 100%; height: 500px; object-fit: cover; border-radius: 8px;">
+                </div>
+
+                <!-- Nội dung bài viết -->
+                <div class="blog__details__text mb-5">
+                    <p><i class="fa fa-calendar"></i> {{ blog_post.time }}</p>
+                    <h2>{{ blog_post.title }}</h2>
+                    <p>{{ blog_post.content }}</p>
+                </div>
+
+                <!-- Thông tin tác giả và danh mục -->
+                <div class="blog__details__content mb-5">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="blog__details__author d-flex align-items-center">
+                                <div class="me-3">
+                                    <img src="{{ url_for('static', filename='img/blog/details/details-author.jpg') }}"
+                                         alt="Author"
+                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                                </div>
+                                <div>
+                                    <h6>Michael Scofield</h6>
+                                    <span>Cộng tác viên</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="blog__details__widget">
+                                <ul class="list-unstyled">
+                                    <li><strong>Loại</strong>Đời sống</li>
+                                    <li><strong>Tags:</strong>Độc lạ bình dương </li>
+                                </ul>
+                                <div class="blog__details__social mt-2">
+                                    <a href="#"><i class="fa fa-facebook"></i></a>
+                                    <a href="#"><i class="fa fa-twitter"></i></a>
+                                    <a href="#"><i class="fa fa-google-plus"></i></a>
+                                    <a href="#"><i class="fa fa-linkedin"></i></a>
+                                    <a href="#"><i class="fa fa-envelope"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phần bình luận -->
+                {% if blog_post.comments %}
+                <div class="blog__details__comments">
+                    <h4>Comments ({{ blog_post.comments | length }})</h4>
+                    {% for comment in blog_post.comments %}
+                        <div class="mb-3">
+                            <strong>{{ comment.get('author', 'Anonymous') }}</strong>
+                            <small>({{ comment.get('created_at', '') }})</small>
+                            <p>{{ comment.get('content', '') }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- Blog Details Section End -->
+
+    <!-- Related Blog Section Begin -->
+    <section class="related-blog spad">
+    <div class="container">
+
+        
+       <section class="related-blog spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title related-blog-title">
+                    <h2>Tin bạn có thể th</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {% for post in related_posts %}
+                <div class="col-lg-4 col-md-4 col-sm-6">
+                    <div class="blog__item">
+                        <div class="blog__item__pic">
+                            <img src="{{ post.images[0] if post.images else url_for('static', filename='img/blog/default.jpg') }}" 
+                                alt="" style="width:100%; height:200px; object-fit:cover;">
+                        </div>
+                        <div class="blog__item__text">
+                            <ul>
+                                <li><i class="fa fa-calendar-o"></i> {{ post.time }}</li>
+                                <li><i class="fa fa-comment-o"></i> {{ post.comments|length if post.comments else 0 }}</li>
+                            </ul>
+                            <h5><a href="{{ url_for('blog_detail', blog_id=post.id) }}">{{ post.title }}</a></h5>
+                            <p>{{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+</div>
+
+    </div>
+</section>
+
+    </div>
+</section>
+
+    <!-- Related Blog Section End -->
+ {% include 'footer.html' %}
+
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+  <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.slicknav.js') }}"></script>
+<script src="{{ url_for('static', filename='js/mixitup.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+
+
+
+</body>
+
+</html>
